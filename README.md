@@ -6,7 +6,7 @@ I appreciate comments. Shoot me an email at noel_s_cruz@yahoo.com!
 
 Hire me!
 
-This is the DAC follow-on from Generating Sine Table.
+This is the DAC follow-on from Generating Sine Table LUT.
 
 https://github.com/noey2020/How-to-Generate-Sine-Table-LUT
 
