@@ -1,22 +1,18 @@
+#ifndef _NSC_MAIN_H
+#define _NSC_MAIN_H
+
 #include "stm32l1xx.h"
+#include "nc_defines.h"
+#endif
+
+void init_GPIO(void);
+void init_DAC(void);
 
 int main(void){
     unsigned int i, output;
 	  
-	  RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-	
-    RCC->APB1ENR |= RCC_APB1ENR_DACEN;
-
-    GPIOA->MODER &= ~(0x0F << (2*4));
-    GPIOA->MODER |= 0x0F << (2*4);
-	
-    DAC->CR |= DAC_CR_BOFF1 | DAC_CR_BOFF2;
-
-    DAC->CR |= DAC_CR_TEN1 | DAC_CR_TEN2;
-	
-	  DAC->CR |= DAC_CR_TSEL1 | DAC_CR_TSEL2;
-	
-	  DAC->CR |= DAC_CR_EN1 | DAC_CR_EN2;
+		init_GPIO();
+		init_DAC();
 	
 	  output = 0;
 	
@@ -33,6 +29,23 @@ int main(void){
 
         if(output >= 0xFFF) output = 0;		
 		}
+}
+
+void init_GPIO(){
+	  RCC->AHBENR |= RCC_AHBENR_GPIOAEN; /* Enable GPIOA clock. */
+
+    GPIOA->MODER &= ~(0x0F << (2*4));  /* Clear MODER4 mode for bits 4 and 5. */ 
+    GPIOA->MODER |= 0x0F << (2*4);     /* Set 11: Analog mode. */
+}
+
+void init_DAC(){                             /* DAC_OUT1 = PA.4, DAC_OUT2 = PA.5 */
+    RCC->APB1ENR |= RCC_APB1ENR_DACEN;       /* Enable DAC clock. */
+
+    DAC->CR |= DAC_CR_BOFF1 | DAC_CR_BOFF2;  /* Enable DAC output buffers BOFF1 and BOFF2. */
+
+    DAC->CR |= DAC_CR_TEN1 | DAC_CR_TEN2;    /* Enable DAC triggers for channels 1 and 2. */
 	
-	  return 0;
+	  DAC->CR |= DAC_CR_TSEL1 | DAC_CR_TSEL2;  /* Select 101: Timer 4 TRGO event. */
+	
+	  DAC->CR |= DAC_CR_EN1 | DAC_CR_EN2;      /* Enable DAC converters 1 and 2. */
 }
